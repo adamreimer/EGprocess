@@ -18,3 +18,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/adamreimer/EGprocess
+BugReports: https://github.com/adamreimer/EGprocess/issues

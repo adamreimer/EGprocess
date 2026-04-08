@@ -1,0 +1,36 @@
+---
+title: "Escapement-Goal-Figures"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Escapement-Goal-Figures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(EGprocess)
+library(tidyverse)
+data("post_Igushik")
+data("data_Igushik")
+```
+
+```{r}
+p_Igushik <- make.age(data_Igushik, 3, 8)
+brood_Igushik <- make.brood(data_Igushik, p_Igushik)
+goal_Igushik <- 
+  data.frame(
+    yr = c(1984, 2001),
+    lb = c(150000, 150000),
+    ub = c(250000, 300000)
+  )
+plot_S(data_Igushik, 
+       title = "Igushik River Sockeye Salmon", 
+       goal_dat = goal_Igushik)
+```

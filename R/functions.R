@@ -5,7 +5,7 @@ library(tidyverse)
 #'
 #' @param post_dat An mcmc object with nodes lnalpha, beta, phi, and sigma.
 #' @param multiplier The Shiny app uses a multiplier to scale beta. Input that here. Defaults to 1.
-#' @param OYP_pct Either 70 or 80 corresponding to a 70% or 80% OYP, respectively. Defaults to NA. The 90% OYP is included regardless. 
+#' @param OYP_pct Either 70 or 80 corresponding to a 70% or 80% OYP, respectively. Defaults to NA. The 90% OYP is included regardless.
 #'
 #' @return A data.frame
 #'
@@ -18,11 +18,11 @@ get_profile <- function(post_dat, multiplier = 1, OYP_pct = NA){
   if (!is.na(OYP_pct) & !(OYP_pct %in% c(70, 80))) {
     stop("Error: 'OYP_pct' must be either 70 or 80 coresponding to a 70% or 80% OYP. The 90% OYP is included by default")
   }
-  
+
   samples <- dim(post_dat)[1]
-  
+
   temp <-
-    data.frame(beta = post_dat$beta * multiplier, 
+    data.frame(beta = post_dat$beta * multiplier,
                lnalpha = post_dat$lnalpha,
                phi = ifelse(is.na(post_dat$phi), 0, post_dat$phi),
                sigma = post_dat$sigma) %>%
@@ -32,12 +32,12 @@ get_profile <- function(post_dat, multiplier = 1, OYP_pct = NA){
                   MSY = R.msy - S.msy) %>%
     tibble::as_tibble() %>%
     tibble::rownames_to_column(var = "id_var")
-  
+
   s <- seq(0, median(temp$S.msy) * 6, by = median(temp$S.msy) * 6 / 1000)
 
-  temp2 <- 
+  temp2 <-
     dplyr::inner_join(temp,
-                      data.frame(id_var = as.character(rep(1:samples, each = length(s))), 
+                      data.frame(id_var = as.character(rep(1:samples, each = length(s))),
                                  s = rep(s, samples), stringsAsFactors = FALSE),
                       by = "id_var") %>%
     dplyr::mutate(Rs = s  * exp(lnalpha  - beta * s),
@@ -52,7 +52,7 @@ get_profile <- function(post_dat, multiplier = 1, OYP_pct = NA){
                      SY = median(SY, na.rm = TRUE)) %>%
     dplyr::mutate(S.msy = median(temp$S.msy)) %>%
     dplyr::ungroup()
-  
+
   if(is.na(OYP_pct)){temp2[, c("s", "OYP90", "SY", "S.msy")]} else(temp2)
 }
 
@@ -74,27 +74,27 @@ get_profile <- function(post_dat, multiplier = 1, OYP_pct = NA){
 #' @export
 
 plot_profile <- function(profile_dat,
-                         limit = NULL, 
+                         limit = NULL,
                          title,
                          goal_range){
   S.msy50 <- median(profile_dat$S.msy)
   n_OYP <- sum(grepl("OYP\\d+", names(profile_dat)))
-  
+
   if(is.null(limit)){
     xmax <- S.msy50 * 2.25
   }
   else xmax <- limit
-  
-  cap_width = 130
+
+  cap_width = 85
   OYP2 <- sum(!(names(profile_dat) %in% c( "s", "OYP90", "SY", "S.msy")))
-  cap <- 
+  cap <-
     case_when(
       is.na(goal_range) & OYP2 == 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability (under average productivity) of achieving X% of maximum sustained yield (MSY) relative to the number of salmon escaped. Achieving 90% of MSY is the standard criteria used to identify an escapement goal range.", width = cap_width),
       is.na(goal_range) & OYP2 != 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability (under average productivity) of achieving 90% of maximum sustained yield (MSY) relative to the number of salmon escaped. Achieving 90% of MSY is the standard criteria used to identify an escapement goal range.", width = cap_width),
       !is.na(goal_range) & OYP2 == 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability (under average productivity) of achieving 90% of maximum sustained yield (MSY) relative to the number of salmon escaped. Probabilities associated with the intersection of the OYP curve and the escapement goal bounds are useful to describe the utility of the goal range with respect to MSY. Achieving 90% of MSY is the standard criteria used to describe an escapement goal range.", width = cap_width),
       !is.na(goal_range) & OYP2 != 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability (under average productivity) of achieving X% of maximum sustained yield (MSY) relative to the number of salmon escaped. Probabilities associated with the intersection of the OYP curve and the escapement goal bounds are useful to describe the utility of the goal range with respect to MSY. Achieving 90% of MSY is the standard criteria used to describe an escapement goal range.", width = cap_width)
     )
-  
+
   plot <- profile_dat %>%
     dplyr::group_by(s) %>%
     dplyr::filter(s <= xmax) %>%
@@ -115,18 +115,18 @@ plot_profile <- function(profile_dat,
       caption = cap) +
     theme(text = element_text(family = "sans"),
           plot.caption = element_text(
-            hjust = 0, 
+            hjust = 0,
             size = 10),
           plot.caption.position = "plot")
-  
+
   if(!anyNA(goal_range)) {
     dat <- data.frame(xmin = unname(goal_range[1]), xmax = unname(goal_range[2]), ymin = -Inf, ymax = Inf)
-    
-    plot2 <- 
-      plot + 
+
+    plot2 <-
+      plot +
       ggplot2::geom_rect(ggplot2::aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
                          data = dat,
-                         inherit.aes = FALSE, fill = "grey", alpha = 0.2) + 
+                         inherit.aes = FALSE, fill = "grey", alpha = 0.2) +
       ggplot2::annotate("segment",
                         x = -Inf, xend = goal_range[[1]],
                         y = profile_dat[["OYP90"]][which.min(abs(profile_dat$s - goal_range[[1]]))],
@@ -138,7 +138,7 @@ plot_profile <- function(profile_dat,
 
     if(OYP2 == 1){
       col <- names(profile_dat)[!(names(profile_dat) %in% c( "s", "OYP90", "SY", "S.msy"))]
-      plot2 + 
+      plot2 +
         ggplot2::annotate("segment",
                           x = -Inf, xend = goal_range[[1]],
                           y = profile_dat[[col]][which.min(abs(profile_dat$s - goal_range[[1]]))],
@@ -168,15 +168,15 @@ make.age <- function(agedata,min.age,max.age,combine=TRUE){
     ac <- data.frame(t(agedata[rage]))
     ac$age <- round(as.numeric(substr(rownames(ac),2,3)))
   }
-  # Combine of eliminate age   
-  if(isTRUE(combine)){ 
+  # Combine of eliminate age
+  if(isTRUE(combine)){
     ac$age <- with(ac, ifelse(age<min.age,min.age,ifelse(age >max.age,max.age,age)))
   } else {
     ac <- ac[which(ac$age>=min.age & ac$age<=max.age),]
-  } 
-  # change NA to 0  
-  ac[is.na(ac)] <- 0  
-  # combine age 
+  }
+  # change NA to 0
+  ac[is.na(ac)] <- 0
+  # combine age
   t.ac <- aggregate(.~age,sum,data=ac[,names(ac) != 'eage'])
   age <- t.ac$age
   t.ac <-data.frame(t(t.ac[,names(t.ac) != 'age']))
@@ -190,46 +190,46 @@ make.brood <- function(data,p){
   A.age <- names(data)[substr(names(data),1,1) =='A']
   # Convert the name to to numeric age
   N.age <- as.numeric(substr(A.age,2,2))
-  # fage is the first age 
+  # fage is the first age
   fage <- min(N.age)
   # nages is the number of return ages
   nages <- length(N.age)
-  # lage is the last reutn ages  
+  # lage is the last reutn ages
   lage <- fage+nages-1
-  # Calculate maximum brood year range: 
+  # Calculate maximum brood year range:
   byr <- seq(min(data$yr)-lage,max(data$yr))
-  # Set up brood year matrix  
+  # Set up brood year matrix
   brood <- matrix(0,ncol=nages+2,nrow = length(byr))
-  # First column is year 
+  # First column is year
   brood[,1] <- byr
-  # Second column is Escapement by year   
+  # Second column is Escapement by year
   brood[,2] <- c(rep(NA,lage),data$S)
-  # 3rd to the last columns are brood year return by age    
-  # Age comp data 
+  # 3rd to the last columns are brood year return by age
+  # Age comp data
   if(isTRUE(p)) {data[,A.age] <- data$N*data[,A.age]}
   # Case: only 1 age (Pink Salmon)
   if(nages ==1){
     brood[,3] <- c(rep(NA,lage-fage),data[,3],rep(NA,fage))
-  } else { 
+  } else {
     for(i in 1:nages){
       brood[,i+2] <- c(rep(NA,lage-fage+1-i),data[,i+3],rep(NA,fage+i-1))
     }
   }
-  # Change to data.frame 
+  # Change to data.frame
   brood <- data.frame(brood)
-  # Name all columns 
+  # Name all columns
   names(brood) <- c('byr','S',paste0('b.Age',seq(fage,lage)))
-  # Recruit is sum of brood year return by age 
+  # Recruit is sum of brood year return by age
   if(nages==1){
     brood$R <- brood[,-c(1:2)]
   } else {
     brood$R <- rowSums(brood[,-c(1:2)])
   }
-  # Create SR data 
+  # Create SR data
   SR <- brood[complete.cases(brood),c('byr','S','R')]
   out <- list(brood=brood,SR=SR)
-  # Output data is a list data    
-  return(out)
+  # Output data is a list data
+  SR #return(out)
 }
 
 #' Spawner-Recruit Plot
@@ -250,14 +250,14 @@ make.brood <- function(data,p){
 #'
 #' @export
 
-plot_SR <- function(post_dat, 
-                    SR_dat, 
-                    title, 
+plot_SR <- function(post_dat,
+                    SR_dat,
+                    title,
                     goal_range = NA,
-                    last_modified = 0, 
+                    last_modified = 0,
                     multiplier){
-  param_50 <- 
-    data.frame(beta = post_dat[["beta"]] * multiplier, 
+  param_50 <-
+    data.frame(beta = post_dat[["beta"]] * multiplier,
                lnalpha = post_dat[["lnalpha"]],
                phi = post_dat[["phi"]],
                sigma = post_dat[["sigma"]]) %>%
@@ -266,15 +266,15 @@ plot_SR <- function(post_dat,
               phi = median(phi),
               sigma = median(sigma),
               Smsy = lnalpha / beta * (0.5 - 0.07 * lnalpha))
-  
-  SR_dat <- 
-    SR_dat %>% 
+
+  SR_dat <-
+    SR_dat %>%
       mutate(update = ifelse(byr >= last_modified, "updated", "existing"))
-  
+
   upper_x = max(SR_dat$S) * 1.05
   upper_y = max(SR_dat$R) * 1.05
-  
-  cap_width = 130
+
+  cap_width = 85
   cap <-
     case_when(
       is.na(goal_range) & last_modified == 0 ~ str_wrap("Note: Circles represent the number of salmon recruited relative to the number of salmon escaped. The thick black line shows the estimated spawner-recruit relationship. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus.  The vertical line shows Smsy.", width = cap_width),
@@ -282,11 +282,11 @@ plot_SR <- function(post_dat,
       !is.na(goal_range) & last_modified == 0 ~ str_wrap("Note: Circles represent the number of salmon recruited relative to the number of salmon escaped. The thick black line shows the estimated spawner-recruit relationship. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus. The vertical line shows Smsy. The current escapement goal range is shaded grey.", width = cap_width),
       !is.na(goal_range) & last_modified != 0 ~ str_wrap("Note: Hollow circles represent the number of salmon recruited relative to the number of salmon escaped while filled circles indicated observations added to the dataset since the escapement goal was last modified. The thick black line shows the estimated spawner-recruit relationship. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus. The vertical line shows Smsy. The current escapement goal range is shaded grey.", width = cap_width)
     )
-      
-  plot <- 
+
+  plot <-
     ggplot2::ggplot(SR_dat, ggplot2::aes(x = S, y = R)) +
     ggplot2::geom_point(aes(shape = update), size = 2) +
-    ggplot2::stat_function(fun=function(x){x * exp(param_50$lnalpha - param_50$beta * x)}, 
+    ggplot2::stat_function(fun=function(x){x * exp(param_50$lnalpha - param_50$beta * x)},
                            linewidth = 1.5,
                            xlim = c(0, upper_x)) +
     ggplot2::scale_x_continuous(minor_breaks = NULL, labels = scales::comma) +
@@ -304,15 +304,15 @@ plot_SR <- function(post_dat,
       caption = cap) +
     theme(text = element_text(family = "sans"),
           plot.caption = element_text(
-            hjust = 0, 
+            hjust = 0,
             size = 10),
           plot.subtitle = element_text(size = 10),
           plot.caption.position = "plot",
           legend.position = "none")
-  
+
   if(!anyNA(goal_range)) {
     dat <- data.frame(xmin = unname(goal_range[1]), xmax = unname(goal_range[2]), ymin = -Inf, ymax = Inf)
-    plot + 
+    plot +
       ggplot2::geom_rect(ggplot2::aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
                          data = dat,
                          inherit.aes = FALSE, fill = "grey", alpha = 0.2)
@@ -337,12 +337,12 @@ plot_SR <- function(post_dat,
 #'
 #' @export
 
-plot_ey <- function(profile_dat, 
-                    SR_dat, 
-                    title, 
-                    goal_range = NA, 
+plot_ey <- function(profile_dat,
+                    SR_dat,
+                    title,
+                    goal_range = NA,
                     last_modified = 0){
-  plot_dat <- 
+  plot_dat <-
     profile_dat %>%
     dplyr::select(s, dplyr::starts_with("SY")) %>%
     dplyr::group_by(s) %>%
@@ -351,18 +351,18 @@ plot_ey <- function(profile_dat,
                      p75.SY = quantile(SY, probs = 0.75, na.rm = TRUE)
     ) %>%
     tidyr::gather(Productivity, SY, median.SY)
-  
-  SR_dat <- 
-    SR_dat %>% 
+
+  SR_dat <-
+    SR_dat %>%
     mutate(Y = R - S,
            update = ifelse(byr >= last_modified, "updated", "existing"))
-  
+
   ymax <- max(SR_dat$Y) * 1.05
   ymin <- if(min(SR_dat$Y) < 0){min(SR_dat$Y) * 1.05} else{0}
   xmax <- max(SR_dat$S) * 1.05
-  
-  cap_width = 130
-  cap <- 
+
+  cap_width = 85
+  cap <-
     case_when(
       is.na(goal_range) & last_modified == 0 ~ str_wrap("Note: Circles represent yield relative to the number of salmon escaped. The thick black line shows the expected yield (under average productivity) relative to the number of salmon escaped.", width = cap_width),
       is.na(goal_range) & last_modified != 0 ~ str_wrap("Note: Hollow circles represent yield relative to the number of salmon escaped while filled circles indicated observations added to the dataset since the escapement goal was last modified. The thick black line shows the expected yield (under average productivity) relative to the number of salmon escaped.", width = cap_width),
@@ -383,16 +383,18 @@ plot_ey <- function(profile_dat,
     ggplot2::theme_bw(base_size = 16) +
     labs(
       title = title,
+      subtitle = paste0("Brood Years:", min(SR_dat$byr), " - ", max(SR_dat$byr)),
       x = "Escapement",
       y = "Yield",
       caption = cap) +
     theme(text = element_text(family = "sans"),
           plot.caption = element_text(
-            hjust = 0, 
+            hjust = 0,
             size = 10),
+          plot.subtitle = element_text(size = 10),
           plot.caption.position = "plot",
           legend.position = "none")
-  
+
   if(!anyNA(goal_range)) {
     dat <- data.frame(xmin = unname(goal_range[1]), xmax = unname(goal_range[2]), ymin = -Inf, ymax = Inf)
     plot + ggplot2::geom_rect(ggplot2::aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
@@ -416,20 +418,20 @@ plot_ey <- function(profile_dat,
 #' plot_S(df, goal_df, "Igushik River Sockeye Salmon")
 #'
 #' @export
-plot_S <- function(S_dat, 
-                   goal_dat, 
+plot_S <- function(S_dat,
+                   goal_dat,
                    title){
-  goal <- 
+  goal <-
     goal_dat %>%
     mutate(across(c(lb, ub), function(x){ifelse(is.na(x), -99, x)})) %>%
-    complete(yr = full_seq(c(yr, max(2025)), 1)) %>%
-    fill(lb, ub, .direction = "down") %>% 
+    complete(yr = full_seq(c(yr, max(S_dat$yr)), 1)) %>%
+    fill(lb, ub, .direction = "down") %>%
     mutate(across(c(lb, ub), function(x){ifelse(x == -99, NA, x)})) %>%
     pivot_longer(cols = c(lb, ub), names_to = "bound", values_to = "S_bound")
-  
-  cap <- str_wrap("Note: Escapement goal lower and upper bounds are shown as solid and dotted lines, respectively. Escapements below the lower bound of the contemporaneous escapement goal are indicated with black fill.", 
-                  width = 130)
-  
+
+  cap <- str_wrap("Note: Escapement goal lower and upper bounds are shown as solid and dashed lines, respectively. Escapements below the lower bound of the contemporaneous escapement goal are indicated with black fill.",
+                  width = 85)
+
   S_dat %>%
     select(yr, S) %>%
     left_join(goal[goal$bound == "lb", ], by = "yr") %>%
@@ -447,7 +449,7 @@ plot_S <- function(S_dat,
       caption = cap) +
     theme(text = element_text(family = "sans"),
           plot.caption = element_text(
-            hjust = 0, 
+            hjust = 0,
             size = 10),
           plot.caption.position = "plot",
           legend.position = "none")

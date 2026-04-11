@@ -178,9 +178,8 @@ EGPIT decided spawner-recruit (SR) relationships should depicted the SR pairs us
 Igushik_SR <-
   plot_SR(post_dat = post_Igushik,
           SR_dat = brood_Igushik,
+          goal_dat = goal_Igushik,
           title = "Igushik River Sockeye Salmon", 
-          goal_range = as.numeric(goal_Igushik[3, 2:3]),
-          last_modified = as.numeric(goal_Igushik[3, 1]) - 8,
           multiplier = 1e-5)
 ggsave(filename = "../man/figures/Igushik_SR.png", #Replace with a path relevant to you.
        plot = Igushik_SR, 
@@ -204,9 +203,8 @@ EGPIT decided expected yield plots should depicted the empirical data used to es
 Igushik_ey <-
   plot_ey(profile_dat = profile_Igushik,
           SR_dat = brood_Igushik,
-          title = "Igushik River Sockeye Salmon", 
-          goal_range = as.numeric(goal_Igushik[3, 2:3]),
-          last_modified = as.numeric(goal_Igushik[3, 1]) - 8)
+          goal_dat = goal_Igushik,
+          title = "Igushik River Sockeye Salmon")
 ggsave(filename = "../man/figures/Igushik_ey.png", #Replace with a path relevant to you.
        plot = Igushik_ey, 
        width = 6, 
@@ -226,9 +224,9 @@ EGPIT decided escapement goals intended to target MSY should use a universal sta
 # make universal so it reads in the goal_dat format and removes the last entry.
 
 Igushik_OYP <-
-  plot_profile(profile_dat = profile_Igushik,
-            title = "Igushik River Sockeye Salmon", 
-            goal_range = as.numeric(goal_Igushik[3, 2:3]))
+  plot_profile(profile_dat = profile_Igushik, 
+            goal_dat = goal_Igushik,
+            title = "Igushik River Sockeye Salmon")
 ggsave(filename = "../man/figures/Igushik_OYP.png", #Replace with a path relevant to you.
        plot = Igushik_OYP, 
        width = 6, 
@@ -252,9 +250,9 @@ profile_Igushik_80 <-
               OYP_pct = 80) # creates a second profile that includes both 90% and 80% of MSY targets.
 
 Igushik_OYP_80 <-
-  plot_profile(profile_dat = profile_Igushik_80,
-            title = "Igushik River Sockeye Salmon", 
-            goal_range = as.numeric(goal_Igushik[3, 2:3]))
+  plot_profile(profile_dat = profile_Igushik_80, 
+               goal_dat = goal_Igushik,
+               title = "Igushik River Sockeye Salmon")
 ggsave(filename = "../man/figures/Igushik_OYP_80.png", #Replace with a path relevant to you.
        plot = Igushik_OYP_80, 
        width = 6, 

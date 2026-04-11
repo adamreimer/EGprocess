@@ -61,9 +61,9 @@ get_profile <- function(post_dat, multiplier = 1, OYP_pct = NA){
 #' Produces a faceted plot of OYP an overlay of the goal range.
 #'
 #' @param profile_dat Output of the get_profile function
-#' @param limit Upper bound of spawners for plot. Default (NULL) will use 2.25 times S.msy.
+#' @param goal_dat A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. ub = NA for lower bound SEGs.
 #' @param title A character vector with the plot title. Suggest "X River, Y Salmon".
-#' @param goal_range A vector with two element c(lower_bound, upper_bound).
+#' @param limit Upper bound of spawners for plot. Default (NULL) will use 2.25 times S.msy.
 #'
 #' @return A figure
 #'
@@ -74,9 +74,9 @@ get_profile <- function(post_dat, multiplier = 1, OYP_pct = NA){
 #' @export
 
 plot_profile <- function(profile_dat,
-                         limit = NULL,
+                         goal_dat,
                          title,
-                         goal_range){
+                         limit = NULL){
   S.msy50 <- median(profile_dat$S.msy)
   n_OYP <- sum(grepl("OYP\\d+", names(profile_dat)))
 
@@ -84,6 +84,8 @@ plot_profile <- function(profile_dat,
     xmax <- S.msy50 * 2.25
   }
   else xmax <- limit
+
+  goal_range <- as.numeric(goal_dat[dim(goal_dat)[1], c(2, 3)])
 
   cap_width = 85
   OYP2 <- sum(!(names(profile_dat) %in% c( "s", "OYP90", "SY", "S.msy")))
@@ -238,9 +240,8 @@ make.brood <- function(data,p){
 #'
 #' @param post_dat A dataframe containing lnalpha, beta, phi, and sigma. Can handle point estimates (input as a single row) or mcmc samples (input as multiple rows)
 #' @param SR_dat A dataframe containing brood year (byr), Recruits (R), and Spawners (S) to be included in the plot.
+#' @param goal_dat A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. ub = NA for lower bound SEGs.
 #' @param title A character vector with the plot title. Suggest "X River, Y Salmon".
-#' @param goal_range A vector with two element c(lower_bound, upper_bound). Defaults to NA.
-#' @param last_modified A integer representing the first brood year in the SR_dat which was not available when the current goal was adopted. When used new brood years will be represented as filled circles while existing brood years will be represented as hollow circles. Defaults to 0 which will result in all brood years being represented as filled circles.
 #' @param multiplier The Shiny app uses a multiplier to scale beta. Input that here. Defaults to 1.
 #'
 #' @return A figure
@@ -252,9 +253,8 @@ make.brood <- function(data,p){
 
 plot_SR <- function(post_dat,
                     SR_dat,
+                    goal_dat,
                     title,
-                    goal_range = NA,
-                    last_modified = 0,
                     multiplier){
   param_50 <-
     data.frame(beta = post_dat[["beta"]] * multiplier,
@@ -267,9 +267,17 @@ plot_SR <- function(post_dat,
               sigma = median(sigma),
               Smsy = lnalpha / beta * (0.5 - 0.07 * lnalpha))
 
+  goal_range <- as.numeric(goal_dat[dim(goal_dat)[1], c(2, 3)])
+
+  # Identify brood years added since the last goal change.
+  # Likely fragile. Need Hamachan to output some of this stuff.
+  yr_max <- max(SR_dat$byr) + as.numeric(rownames(SR_dat)[1])
+  yr_modified <- goal_dat$yr[if(max(goal_dat$yr) > yr_max){dim(goal_dat)[1] - 1}else(dim(goal_dat)[1])]
   SR_dat <-
     SR_dat %>%
-      mutate(update = ifelse(byr >= last_modified, "updated", "existing"))
+    mutate(update = ifelse(byr >= min(yr_max, yr_modified) - as.numeric(rownames(SR_dat)[1]),
+                           "updated",
+                           "existing"))
 
   upper_x = max(SR_dat$S) * 1.05
   upper_y = max(SR_dat$R) * 1.05
@@ -277,10 +285,8 @@ plot_SR <- function(post_dat,
   cap_width = 85
   cap <-
     case_when(
-      is.na(goal_range) & last_modified == 0 ~ str_wrap("Note: Circles represent the number of salmon recruited relative to the number of salmon escaped. The thick black line shows the estimated spawner-recruit relationship. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus.  The vertical line shows Smsy.", width = cap_width),
-      is.na(goal_range) & last_modified != 0 ~ str_wrap("Note: Hollow circles represent the number of salmon recruited relative to the number of salmon escaped while filled circles indicated observations added to the dataset since the escapement goal was last modified. The thick black line shows the estimated spawner-recruit relationship. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus. The vertical line shows Smsy.", width = cap_width),
-      !is.na(goal_range) & last_modified == 0 ~ str_wrap("Note: Circles represent the number of salmon recruited relative to the number of salmon escaped. The thick black line shows the estimated spawner-recruit relationship. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus. The vertical line shows Smsy. The current escapement goal range is shaded grey.", width = cap_width),
-      !is.na(goal_range) & last_modified != 0 ~ str_wrap("Note: Hollow circles represent the number of salmon recruited relative to the number of salmon escaped while filled circles indicated observations added to the dataset since the escapement goal was last modified. The thick black line shows the estimated spawner-recruit relationship. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus. The vertical line shows Smsy. The current escapement goal range is shaded grey.", width = cap_width)
+      sum(SR_dat$update == "updated") == 0 ~ str_wrap("Note: The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus. The vertical line shows Smsy. The current escapement goal range is shaded grey.", width = cap_width),
+      sum(SR_dat$update == "updated") > 0 ~ str_wrap("Note: Filled circles indicated observations added to the dataset since the escapement goal last changed. The dashed line represents the 1:1 line; points above this line represent spawning events that produced a harvestable surplus. The vertical line shows Smsy. The current escapement goal range is shaded grey.", width = cap_width)
     )
 
   plot <-
@@ -320,15 +326,15 @@ plot_SR <- function(post_dat,
   else plot
 }
 
+
 #' Expected Yield Plot
 #'
 #' Produces a SR plot with an overlay of Smsy and the goal range.
 #'
 #' @param profile_dat Output of the get_profile function.
 #' @param SR_dat A dataframe containing brood year (byr), Recruits (R), and Spawners (S) to be included in the plot.
+#' @param goal_dat A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. ub = NA for lower bound SEGs.
 #' @param title A character vector with the plot title. Suggest "X River, Y Salmon".
-#' @param goal_range A vector with two element c(lower_bound, upper_bound). Defaults to NA.
-#' @param last_modified A integer representing the first brood year in the SR_dat which was not available when the current goal was adopted. When used new brood years will be represented as filled circles while existing brood years will be represented as hollow circles. Defaults to 0 which will result in all brood years being represented as filled circles.
 #'
 #' @return A figure
 #'
@@ -339,9 +345,8 @@ plot_SR <- function(post_dat,
 
 plot_ey <- function(profile_dat,
                     SR_dat,
-                    title,
-                    goal_range = NA,
-                    last_modified = 0){
+                    goal_dat,
+                    title){
   plot_dat <-
     profile_dat %>%
     dplyr::select(s, dplyr::starts_with("SY")) %>%
@@ -352,10 +357,18 @@ plot_ey <- function(profile_dat,
     ) %>%
     tidyr::gather(Productivity, SY, median.SY)
 
+  goal_range <- as.numeric(goal_dat[dim(goal_dat)[1], c(2, 3)])
+
+  # Identify brood years added since the last goal change.
+  # Likely fragile. Need Hamachan to output some of this stuff.
+  yr_max <- max(SR_dat$byr) + as.numeric(rownames(SR_dat)[1])
+  yr_modified <- goal_dat$yr[if(max(goal_dat$yr) > yr_max){dim(goal_dat)[1] - 1}else(dim(goal_dat)[1])]
   SR_dat <-
     SR_dat %>%
     mutate(Y = R - S,
-           update = ifelse(byr >= last_modified, "updated", "existing"))
+           update = ifelse(byr >= min(yr_max, yr_modified) - as.numeric(rownames(SR_dat)[1]),
+                           "updated",
+                           "existing"))
 
   ymax <- max(SR_dat$Y) * 1.05
   ymin <- if(min(SR_dat$Y) < 0){min(SR_dat$Y) * 1.05} else{0}
@@ -364,10 +377,8 @@ plot_ey <- function(profile_dat,
   cap_width = 85
   cap <-
     case_when(
-      is.na(goal_range) & last_modified == 0 ~ str_wrap("Note: Circles represent yield relative to the number of salmon escaped. The thick black line shows the expected yield (under average productivity) relative to the number of salmon escaped.", width = cap_width),
-      is.na(goal_range) & last_modified != 0 ~ str_wrap("Note: Hollow circles represent yield relative to the number of salmon escaped while filled circles indicated observations added to the dataset since the escapement goal was last modified. The thick black line shows the expected yield (under average productivity) relative to the number of salmon escaped.", width = cap_width),
-      !is.na(goal_range) & last_modified == 0 ~ str_wrap("Note: Circles represent yield relative to the number of salmon escaped. The thick black line shows the expected yield (under average productivity) relative to the number of salmon escaped. The current escapement goal range is shaded grey.", width = cap_width),
-      !is.na(goal_range) & last_modified != 0 ~ str_wrap("Note: Hollow circles represent yield relative to the number of salmon escaped while filled circles indicated observations added to the dataset since the escapement goal was last modified. The thick black line shows the expected yield (under average productivity) relative to the number of salmon escaped. The current escapement goal range is shaded grey.", width = cap_width)
+      sum(SR_dat$update == "updated") == 0 ~ str_wrap("Note: The current escapement goal range is shaded grey.", width = cap_width),
+      sum(SR_dat$update == "updated") > 0 ~ str_wrap("Note: Filled circles indicated observations added to the dataset since the escapement goal was last modified. The current escapement goal range is shaded grey.", width = cap_width)
     )
 
   plot <-

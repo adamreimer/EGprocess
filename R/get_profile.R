@@ -2,9 +2,9 @@
 #' @description Creates a dataset for plotting OYP and EY plots.
 #' This function creates a dataframe that can be used by plot_profile() and plot_ey()
 #'
-#' @param post_dat An mcmc object with nodes lnalpha, beta, phi, and sigma.
+#' @param posterior_data An mcmc object with nodes lnalpha, beta, phi, and sigma.
 #' @param multiplier The Shiny app uses a multiplier to scale beta. Input that here. Defaults to 1.
-#' @param MSY_pct Either 70 or 80 corresponding to a 70% or 80% OYP, respectively. Defaults to NA. The 90% OYP is included regardless.
+#' @param MSY_pct The 70% or 80% OYP can be specified; must be entered as either 70 or 80. Defaults to NA. The 90% OYP is included regardless.
 #'
 #' @return A data.frame
 #'
@@ -15,18 +15,18 @@
 #'
 #' @export
 
-get_profile <- function(post_dat, multiplier = 1, MSY_pct = NA){
+get_profile <- function(posterior_data, multiplier = 1, MSY_pct = NA){
   if (!is.na(MSY_pct) & !(MSY_pct %in% c(70, 80))) {
     stop("Error: 'MSY_pct' must be either 70 or 80 coresponding to a 70% or 80% OYP. The 90% OYP is included by default")
   }
 
-  samples <- dim(post_dat)[1]
+  samples <- dim(posterior_data)[1]
 
   temp <-
-    data.frame(beta = post_dat$beta * multiplier,
-               lnalpha = post_dat$lnalpha,
-               phi = ifelse(is.na(post_dat$phi), 0, post_dat$phi),
-               sigma = post_dat$sigma) %>%
+    data.frame(beta = posterior_data$beta * multiplier,
+               lnalpha = posterior_data$lnalpha,
+               phi = ifelse(is.na(posterior_data$phi), 0, posterior_data$phi),
+               sigma = posterior_data$sigma) %>%
     #JTP: can this be deleted??
     #as.data.frame() %>%
     dplyr::mutate(S.msy = lnalpha / beta * (0.5 - 0.07 * lnalpha),

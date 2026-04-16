@@ -2,7 +2,7 @@
 #' @description
 #' Produces a plot of historical escapements with an overlay of the goal range.
 #'
-#' @param brood_dat A dataframe containing calendar year (yr) and escapement(S).
+#' @param brood_data A dataframe containing calendar year (yr) and escapement(S).
 #' @param goal_dat  A dataframe containing calendar year (yr), the escapement goal
 #' lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include
 #' years where the goal changed. If the updated analysis resulted in a new
@@ -12,7 +12,11 @@
 #'
 #' @return A figure
 #'
-#' @import tidyverse
+#' @import dplyr
+#' @import tibble
+#' @import tidyr
+#' @import ggplot2
+#' @import stringr
 #'
 #' @examples
 #'
@@ -22,16 +26,16 @@
 #' plot_escapement(brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon")
 #'
 #' @export
-plot_escapement <- function(brood_dat,
+plot_escapement <- function(brood_data,
                    goal_dat,
                    title){
-  brood_dat <- brood_dat %>% filter(!is.na(S))
+  brood_data <- brood_data %>% dplyr::filter(!is.na(S))
 
-  yr_max <- if(sum(goal_dat$yr == "new") == 0){max(brood_dat$yr)}else{max(brood_dat$yr) + 2}
+  yr_max <- if(sum(goal_dat$yr == "new") == 0){max(brood_data$yr)}else{max(brood_data$yr) + 2}
   goal <-
     goal_dat %>%
     mutate(across(c(lb, ub), function(x){ifelse(is.na(x), -99, x)}),
-           yr = as.numeric(ifelse(yr == "new", max(brood_dat$yr) + 1, yr))) %>%
+           yr = as.numeric(ifelse(yr == "new", max(brood_data$yr) + 1, yr))) %>%
     complete(yr = full_seq(c(yr, yr_max), 1)) %>%
     fill(lb, ub, .direction = "down") %>%
     mutate(across(c(lb, ub), function(x){ifelse(x == -99, NA, x)})) %>%
@@ -42,22 +46,22 @@ plot_escapement <- function(brood_dat,
                   of the contemporaneous escapement goal are indicated with black fill.",
                   width = 85)
 
-  brood_dat %>%
-    select(yr, S) %>%
-    left_join(goal[goal$bound == "lb", ], by = "yr") %>%
-    mutate(miss = ifelse(S >= S_bound | is.na(S_bound), FALSE, TRUE)) %>%
-    ggplot(aes(x = yr)) +
-    geom_bar(aes(y = S, fill = miss), stat = "identity") +
-    geom_line(aes(y = S_bound, linetype = bound), data = goal) +
-    scale_y_continuous(labels = scales::comma) +
-    scale_fill_manual(values = c("grey75", "black")) +
-    theme_bw(base_size = 16) +
-    labs(
+  brood_data %>%
+    dplyr::select(yr, S) %>%
+    dplyr::left_join(goal[goal$bound == "lb", ], by = "yr") %>%
+    dplyr::mutate(miss = ifelse(S >= S_bound | is.na(S_bound), FALSE, TRUE)) %>%
+    ggplot2::ggplot(aes(x = yr)) +
+    ggplot2::geom_bar(aes(y = S, fill = miss), stat = "identity") +
+    ggplot2::geom_line(aes(y = S_bound, linetype = bound), data = goal) +
+    ggplot2::scale_y_continuous(labels = scales::comma) +
+    ggplot2::scale_fill_manual(values = c("gray75", "black")) +
+    ggplot2::theme_bw(base_size = 16) +
+    ggplot2::labs(
       title = title,
       x = "Year",
       y = "Escapement",
       caption = cap) +
-    theme(text = element_text(family = "sans"),
+    ggplot2::theme(text = element_text(family = "sans"),
           plot.caption = element_text(
             hjust = 0,
             size = 10),

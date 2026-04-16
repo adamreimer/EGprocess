@@ -8,7 +8,8 @@
 #'
 #' @return A data.frame
 #'
-#' @import tidyverse
+#' @import dplyr
+#' @import tibble
 #'
 #' @examples
 #' get_profile(post_Igushik_byr63-15, 1e-5)

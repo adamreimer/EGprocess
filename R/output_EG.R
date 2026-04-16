@@ -18,7 +18,8 @@
 #'
 #' @return A figure
 #'
-#' @import tidyverse
+#' @import dplyr
+#' @import tibble
 #'
 #' @examples
 #'

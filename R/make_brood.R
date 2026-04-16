@@ -1,12 +1,14 @@
 #' @title Create Brood Data
 #'
-#' @param data
-#' @param p
+#' @param data Brood data
+#' @param p Adam will explain
 #'
-#' @returns
-#' @export
+#' @returns data frame
 #'
 #' @examples
+#' make_brood(data = data_Igushik, p = p_Igushik)
+#'
+#' #' @export
 make_brood <- function(data, p){
   # Extract name of age data (A2, A3,etc)
   A.age <- names(data)[substr(names(data), 1, 1) == 'A']

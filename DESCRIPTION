@@ -1,11 +1,11 @@
 Package: EGprocess
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.1.0
+Version: 0.1.5
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Adam", "Reimer",
+      email = "adam.reimer@alaska.gov",
       role = c("aut", "cre")
     )
   )
@@ -16,7 +16,17 @@ Encoding: UTF-8
 LazyData: true
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/adamreimer/EGprocess
 BugReports: https://github.com/adamreimer/EGprocess/issues
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    dplyr,
+    ggplot2,
+    stringr,
+    tibble,
+    tidyr
+Config/testthat/edition: 3

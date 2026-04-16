@@ -1,20 +1,20 @@
-
-
 #' @title Create Age Dataset
 #'
-#' @param agedata
-#' @param min_age
-#' @param max_age
-#' @param combine
+#' @param agedata The age data
+#' @param min_age Minimum age to assess
+#' @param max_age Maximum age to assess
+#' @param combine Determine whether to combine age data. Defaults to TRUE.
 #'
-#' @returns
-#' @export
+#' @returns data frame
 #'
 #' @examples
+#' make_age(agedata = data_Igushik, min.age = 3, max.age = 8)
+#'
+#' #' @export
 make_age <- function(agedata, min_age, max_age, combine=TRUE){
 
-  eage <- names(agedata)[substr(names(agedata),1,1) =='a']
-  rage <- names(agedata)[substr(names(agedata),1,1) =='A']
+  eage <- names(agedata)[substr(names(agedata), 1, 1) =='a']
+  rage <- names(agedata)[substr(names(agedata), 1, 1) =='A']
 
   if(length(eage)>0){
     ac <- data.frame(t(agedata[,eage]))

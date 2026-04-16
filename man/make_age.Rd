@@ -4,10 +4,10 @@
 \alias{make_age}
 \title{Create Age Dataset}
 \usage{
-make_age(agedata, min_age, max_age, combine = TRUE)
+make_age(age_data, min_age, max_age, combine = TRUE)
 }
 \arguments{
-\item{agedata}{The age data}
+\item{age_data}{The age data}
 
 \item{min_age}{Minimum age to assess}
 
@@ -22,6 +22,6 @@ data frame
 Create Age Dataset
 }
 \examples{
-make_age(agedata = data_Igushik, min_age = 3, max_age = 8)
+make_age(age_data = data_Igushik, min_age = 3, max_age = 8)
 
 }

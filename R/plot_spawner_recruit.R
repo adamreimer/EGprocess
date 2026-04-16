@@ -17,14 +17,16 @@
 #'
 #' @return A figure
 #'
-#' @import tidyverse
+#' @import dplyr tibble tidyr ggplot2 stringr
+#' @importFrom magrittr %>%
+#' @importFrom scales comma
 #'
 #' @examples
 #'
-#' p_Igushik <- make.age(data_Igushik, 3, 8)
-#' brood_Igushik <- make.brood(data_Igushik, p_Igushik)
+#' p_Igushik <- make_age(data_Igushik, 3, 8)
+#' brood_Igushik <- make_brood(data_Igushik, p_Igushik)
 #'
-#' plot_SR(posterior_data = post_Igushik_byr63-15, brood_data = brood_Igushik,
+#' plot_SR(posterior_data = post_Igushik_byr63_15, brood_data = brood_Igushik,
 #' goal_data = goal_Igushik, title = "Igushik River Sockeye Salmon", multiplier = 1e-5)
 #'
 #' @export
@@ -39,11 +41,11 @@ plot_SR <- function(posterior_data,
                lnalpha = posterior_data[["lnalpha"]],
                phi = posterior_data[["phi"]],
                sigma = posterior_data[["sigma"]]) %>%
-    summarise(beta = median(beta),
+    dplyr::summarise(beta = median(beta),
               lnalpha = median(lnalpha),
               phi = median(phi),
               sigma = median(sigma),
-              Smsy = lnalpha / beta * (0.5 - 0.07 * lnalpha))
+              Smsy = lnalpha / beta * (0.5000002 - 0.07 * lnalpha))
 
   # Identify brood years added since the last goal change.
   # Likely fragile. Need Hamachan to output some of this stuff.

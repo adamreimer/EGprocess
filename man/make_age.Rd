@@ -22,7 +22,6 @@ data frame
 Create Age Dataset
 }
 \examples{
-make_age(agedata = data_Igushik, min.age = 3, max.age = 8)
+make_age(agedata = data_Igushik, min_age = 3, max_age = 8)
 
-#' @export
 }

@@ -6,11 +6,12 @@
 #' @returns data frame
 #'
 #' @examples
+#' p_Igushik <- make_age(data_Igushik, 3, 8)
 #' make_brood(data = data_Igushik, p = p_Igushik)
 #'
-#' #' @export
+#' @export
 make_brood <- function(data, p){
-  # Extract name of age data (A2, A3,etc)
+  # Extract name of age data (A2, A3, etc)
   A.age <- names(data)[substr(names(data), 1, 1) == 'A']
 
   # Convert the name to to numeric age
@@ -23,13 +24,13 @@ make_brood <- function(data, p){
   nages <- length(N.age)
 
   # lage is the last return ages
-  lage <- fage+nages-1
+  lage <- fage + nages-1
 
   # Calculate maximum brood year range:
-  byr <- seq(min(data$yr)-lage,max(data$yr))
+  byr <- seq(min(data$yr)-lage, max(data$yr))
 
   # Set up brood year matrix
-  brood <- matrix(0,ncol=nages+2,nrow = length(byr))
+  brood <- matrix(0, ncol = nages+2, nrow = length(byr))
 
   # First column is year
   brood[, 1] <- byr
@@ -50,7 +51,7 @@ make_brood <- function(data, p){
   }
   brood <- data.frame(brood)
   # Name all columns
-  names(brood) <- c('yr', 'S', paste0('b.Age', seq(fage,lage)))
+  names(brood) <- c('yr', 'S', paste0('b.Age', seq(fage, lage)))
   # Recruit is sum of brood year return by age
   if(nages == 1){
     brood$R <- brood[, -c(1:2)]

@@ -23,10 +23,10 @@ Produces a SR plot with an overlay of Smsy and the goal range.
 }
 \examples{
 
-p_Igushik <- make.age(data_Igushik, 3, 8)
-brood_Igushik <- make.brood(data_Igushik, p_Igushik)
+p_Igushik <- make_age(data_Igushik, 3, 8)
+brood_Igushik <- make_brood(data_Igushik, p_Igushik)
 
-profile_Igushik <- get_profile(post_Igushik_byr63-15, multiplier = 1e-5)
+profile_Igushik <- get_profile(post_Igushik_byr63_15, multiplier = 1e-5)
 
 plot_ey(profile_Igushik, brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon")
 

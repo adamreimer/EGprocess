@@ -26,7 +26,7 @@ Produces faceted OYP plots representing the prior and updated OYPs for the stock
 post_list <-
   list(
     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-    'Brood Years: 1963-2017' = post_Igushik_byr63-15
+    'Brood Years: 1963-2017' = post_Igushik_byr63_15
   )
 profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 

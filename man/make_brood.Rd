@@ -18,7 +18,7 @@ data frame
 Create Brood Data
 }
 \examples{
+p_Igushik <- make_age(data_Igushik, 3, 8)
 make_brood(data = data_Igushik, p = p_Igushik)
 
-#' @export
 }

@@ -21,6 +21,6 @@ Creates a dataset for plotting OYP and EY plots.
 This function creates a dataframe that can be used by plot_profile() and plot_ey()
 }
 \examples{
-get_profile(post_Igushik_byr63-15, 1e-5)
+get_profile(posterior_data = post_Igushik_byr63_15, multiplier = 1e-5)
 
 }

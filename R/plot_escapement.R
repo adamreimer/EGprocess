@@ -17,6 +17,7 @@
 #' @import tidyr
 #' @import ggplot2
 #' @import stringr
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #'

@@ -23,6 +23,9 @@ use_mit_license("Your Name")
 # use_package("tibble", type = "Imports")
 # use_package("stringr", type = "Imports")
 # use_package("tidyr", type = "Imports")
+# use_package("magrittr", type = "Imports")
+# use_package("scales", type = "Imports")
+
 
 # Write the needed .Rd files for each script
 devtools::document()
@@ -32,7 +35,7 @@ devtools::document()
 
 
 devtools::check()
-# JTP 4/15. Stopped here. Failing to build the vignette
+
 
 
 

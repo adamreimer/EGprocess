@@ -17,6 +17,8 @@ LazyData: true
 Suggests: 
     knitr,
     rmarkdown,
+    bookdown,
+    tidyverse,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/adamreimer/EGprocess
@@ -26,6 +28,8 @@ RoxygenNote: 7.3.3
 Imports: 
     dplyr,
     ggplot2,
+    magrittr,
+    scales,
     stringr,
     tibble,
     tidyr

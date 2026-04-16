@@ -10,9 +10,10 @@
 #'
 #' @import dplyr
 #' @import tibble
+#' @importFrom magrittr %>%
 #'
 #' @examples
-#' get_profile(post_Igushik_byr63-15, 1e-5)
+#' get_profile(posterior_data = post_Igushik_byr63_15, multiplier = 1e-5)
 #'
 #' @export
 
@@ -29,8 +30,8 @@ get_profile <- function(posterior_data, multiplier = 1, MSY_pct = NA){
                phi = ifelse(is.na(posterior_data$phi), 0, posterior_data$phi),
                sigma = posterior_data$sigma) %>%
     #JTP: can this be deleted??
-    #as.data.frame() %>%
-    dplyr::mutate(S.msy = lnalpha / beta * (0.5 - 0.07 * lnalpha),
+    as.data.frame() %>%
+    dplyr::mutate(S.msy = lnalpha / beta * (0.5000001 - 0.07 * lnalpha),
                   R.msy = S.msy * exp(lnalpha - beta * S.msy),
                   MSY = R.msy - S.msy) %>%
     tibble::as_tibble() %>%

@@ -26,11 +26,11 @@ Produces a plot of the OYP with an overlay of the goal range.
 post_list <-
   list(
     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-    'Brood Years: 1963-2017' = post_Igushik_byr63-15
+    'Brood Years: 1963-2017' = post_Igushik_byr63_15
   )
 profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 
-plot_profile(profile_list, goal_Igushik, "Igushik River Sockeye Salmon")
+plot_profile(profile_list[[2]], goal_Igushik, "Igushik River Sockeye Salmon")
 
 }
 \seealso{

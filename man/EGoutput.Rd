@@ -47,11 +47,11 @@ brood_Igushik <- make_brood(data_Igushik, p_Igushik)
 post_list <-
   list(
     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-    'Brood Years: 1963-2017' = post_Igushik_byr63-15
+    'Brood Years: 1963-2017' = post_Igushik_byr63_15
   )
 profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 
-EGoutput(posterior_data = post_Igushik, brood_data = brood_Igushik,
+EGoutput(posterior_data = post_Igushik_byr63_15, brood_data = brood_Igushik,
 goal_data = goal_Igushik, title = "Igushik River Sockeye Salmon", multiplier = 1e-5)
 
 }

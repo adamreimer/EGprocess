@@ -1,6 +1,6 @@
 #' @title Create Age Dataset
 #'
-#' @param agedata The age data
+#' @param age_data The age data
 #' @param min_age Minimum age to assess
 #' @param max_age Maximum age to assess
 #' @param combine Determine whether to combine age data. Defaults to TRUE.
@@ -8,16 +8,16 @@
 #' @returns data frame
 #'
 #' @examples
-#' make_age(agedata = data_Igushik, min.age = 3, max.age = 8)
+#' make_age(age_data = data_Igushik, min_age = 3, max_age = 8)
 #'
-#' #' @export
-make_age <- function(agedata, min_age, max_age, combine=TRUE){
+#' @export
+make_age <- function(age_data, min_age, max_age, combine=TRUE){
 
-  eage <- names(agedata)[substr(names(agedata), 1, 1) =='a']
-  rage <- names(agedata)[substr(names(agedata), 1, 1) =='A']
+  eage <- names(age_data)[substr(names(age_data), 1, 1) =='a']
+  rage <- names(age_data)[substr(names(age_data), 1, 1) =='A']
 
   if(length(eage)>0){
-    ac <- data.frame(t(agedata[,eage]))
+    ac <- data.frame(t(age_data[,eage]))
 
     # Create European Age  fw.sw
     ac$eage <-as.numeric(substr(rownames(ac), 2, 5))
@@ -26,7 +26,7 @@ make_age <- function(agedata, min_age, max_age, combine=TRUE){
     ac$age <- round(with(ac, floor(eage)+ 10*(eage-floor(eage)))+1)
 
   } else if(length(rage)>0){
-    ac <- data.frame(t(agedata[rage]))
+    ac <- data.frame(t(age_data[rage]))
     ac$age <- round(as.numeric(substr(rownames(ac), 2, 3)))
   }
   # Combine of eliminate age
@@ -39,7 +39,7 @@ make_age <- function(agedata, min_age, max_age, combine=TRUE){
   ac[is.na(ac)] <- 0
 
   # combine age
-  t.ac <- aggregate(.~age,sum,data=ac[,names(ac) != 'eage'])
+  t.ac <- aggregate(.~age, sum, data=ac[,names(ac) != 'eage'])
   age <- t.ac$age
   t.ac <-data.frame(t(t.ac[,names(t.ac) != 'age']))
   names(t.ac) <- paste0('A',age)

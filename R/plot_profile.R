@@ -11,18 +11,20 @@
 #'
 #' @return A figure
 #'
-#' @import tidyverse
+#' @import dplyr tibble tidyr ggplot2 stringr
+#' @importFrom magrittr %>%
+#' @importFrom scales comma
 #'
 #' @examples
 #'
 #' post_list <-
 #'   list(
 #'     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-#'     'Brood Years: 1963-2017' = post_Igushik_byr63-15
+#'     'Brood Years: 1963-2017' = post_Igushik_byr63_15
 #'   )
 #' profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 #'
-#' plot_profile(profile_list, goal_Igushik, "Igushik River Sockeye Salmon")
+#' plot_profile(profile_list[[2]], goal_Igushik, "Igushik River Sockeye Salmon")
 #'
 #' @export
 
@@ -41,7 +43,7 @@ plot_profile <- function(profile_dat,
   goal_range <- as.numeric(goal_dat[dim(goal_dat)[1], c(2, 3)])
 
   cap_width = 85
-  OYP2 <- sum(!(names(profile_dat) %in% c( "s", "OYP90", "SY", "S.msy")))
+  OYP2 <- sum(!(names(profile_dat) %in% c("s", "OYP90", "SY", "S.msy")))
   cap <-
     case_when(
       OYP2 == 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability (under average productivity) of achieving 90% of maximum sustained yield (MSY) relative to the number of salmon escaped. Probabilities associated with the intersection of the OYP curve and the escapement goal bounds are useful to describe the utility of the goal range with respect to MSY. Achieving 90% of MSY is the standard criteria used to describe an escapement goal range.", width = cap_width),

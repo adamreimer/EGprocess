@@ -7,9 +7,16 @@
 plot_profile_facet(profile_data, goal_data, title, limit = NULL)
 }
 \arguments{
-\item{profile_data}{A list of 2 OYPs that you wish to plot. The name of each list object will be used as the facet title. Recommend "Brood Year: xxxx - YYYY" for each item. The function assumes the first item in the list is the old OYP and the second item in the list is the updated OYP.}
+\item{profile_data}{A list of 2 OYPs that you wish to plot. The name of each
+list object will be used as the facet title. Recommend "Brood Year: xxxx - YYYY"
+for each item. The function assumes the first item in the list is the old OYP
+and the second item in the list is the updated OYP.}
 
-\item{goal_data}{A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. If the updated analysis resulted in a new escapement goal finding the new finding should be included as the last row with the year labeled as "new". Use ub = NA for lower bound SEGs.}
+\item{goal_data}{A dataframe containing calendar year (yr), the escapement goal
+lower bound (lb) and, the escapement goal upper bound (ub). Only needs to
+include years where the goal changed. If the updated analysis resulted in a
+new escapement goal finding the new finding should be included as the last
+row with the year labeled as "new". Use ub = NA for lower bound SEGs.}
 
 \item{title}{A character vector with the plot title. Suggest "X River, Y Salmon".}
 
@@ -19,14 +26,18 @@ plot_profile_facet(profile_data, goal_data, title, limit = NULL)
 A figure
 }
 \description{
-Produces faceted OYP plots representing the prior and updated OYPs for the stock, both overlain with escapement goal ranges. If a new escapement goal finding was made as a result of the updated analysis the new escapement goal will be overlay the updated OYP while the prior escapement goal range will overlay the prior OYP.
+Produces faceted OYP plots representing the prior and updated OYPs for the
+stock, both overlain with escapement goal ranges. If a new escapement goal
+finding was made as a result of the updated analysis the new escapement goal
+will be overlay the updated OYP while the prior escapement goal range will
+overlay the prior OYP.
 }
 \examples{
 
 post_list <-
   list(
     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-    'Brood Years: 1963-2017' = post_Igushik_byr63_15
+    'Brood Years: 1963-2015' = post_Igushik_byr63_15
   )
 profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 

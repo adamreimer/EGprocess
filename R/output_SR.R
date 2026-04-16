@@ -24,13 +24,13 @@
 #'
 #' @examples
 #'
-#' p_Igushik <- make_age(data_Igushik, 3, 8)
-#' brood_Igushik <- make_brood(data_Igushik, p_Igushik)
+#' p_Igushik <- make_age(data_Igushik, min_age = 3, max_age = 8)
+#' brood_Igushik <- make_brood(data = data_Igushik, p = p_Igushik)
 #'
 #' post_list <-
 #'   list(
 #'     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-#'     'Brood Years: 1963-2017' = post_Igushik_byr63_15
+#'     'Brood Years: 1963-2015' = post_Igushik_byr63_15
 #'   )
 #' profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 #'

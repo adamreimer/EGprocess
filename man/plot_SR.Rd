@@ -32,8 +32,8 @@ Produces a SR plot with an overlay of Smsy and the goal range.
 }
 \examples{
 
-p_Igushik <- make_age(data_Igushik, 3, 8)
-brood_Igushik <- make_brood(data_Igushik, p_Igushik)
+p_Igushik <- make_age(data_Igushik, min_age = 3, max_age = 8)
+brood_Igushik <- make_brood(data = data_Igushik, p = p_Igushik)
 
 plot_SR(posterior_data = post_Igushik_byr63_15, brood_data = brood_Igushik,
 goal_data = goal_Igushik, title = "Igushik River Sockeye Salmon", multiplier = 1e-5)

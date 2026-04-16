@@ -9,9 +9,15 @@ plot_ey(profile_data, brood_data, goal_data, title)
 \arguments{
 \item{profile_data}{Output of the get_profile function.}
 
-\item{brood_data}{A dataframe containing year (yr), Spawners (S), and Recruits (R) to be included in the plot. The data frame should include years without empirical observations of S and R.}
+\item{brood_data}{A dataframe containing year (yr), Spawners (S), and Recruits (R)
+to be included in the plot. The data frame should include years without empirical
+observations of S and R.}
 
-\item{goal_data}{A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. If the updated analysis resulted in a new escapement goal finding the new finding should be included as the last row with the year labeled as "new". Use ub = NA for lower bound SEGs.}
+\item{goal_data}{A dataframe containing calendar year (yr), the escapement
+goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs
+to include years where the goal changed. If the updated analysis resulted in
+a new escapement goal finding the new finding should be included as the last
+row with the year labeled as "new". Use ub = NA for lower bound SEGs.}
 
 \item{title}{A character vector with the plot title. Suggest "X River, Y Salmon".}
 }
@@ -23,11 +29,12 @@ Produces a SR plot with an overlay of Smsy and the goal range.
 }
 \examples{
 
-p_Igushik <- make_age(data_Igushik, 3, 8)
-brood_Igushik <- make_brood(data_Igushik, p_Igushik)
+p_Igushik <- make_age(data_Igushik, min_age = 3, max_age = 8)
+brood_Igushik <- make_brood(data = data_Igushik, p = p_Igushik)
 
-profile_Igushik <- get_profile(post_Igushik_byr63_15, multiplier = 1e-5)
+profile_Igushik <- get_profile(posterior_data = post_Igushik_byr63_15, multiplier = 1e-5)
 
-plot_ey(profile_Igushik, brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon")
+plot_ey(profile_data = profile_Igushik, brood_data = brood_Igushik,
+goal_data = goal_Igushik, title = "Igushik River Sockeye Salmon")
 
 }

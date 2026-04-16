@@ -23,8 +23,8 @@
 #'
 #' @examples
 #'
-#' p_Igushik <- make_age(data_Igushik, 3, 8)
-#' brood_Igushik <- make_brood(data_Igushik, p_Igushik)
+#' p_Igushik <- make_age(data_Igushik, min_age = 3, max_age = 8)
+#' brood_Igushik <- make_brood(data = data_Igushik, p = p_Igushik)
 #'
 #' plot_SR(posterior_data = post_Igushik_byr63_15, brood_data = brood_Igushik,
 #' goal_data = goal_Igushik, title = "Igushik River Sockeye Salmon", multiplier = 1e-5)
@@ -88,14 +88,14 @@ plot_SR <- function(posterior_data,
                        data = goal_data[dim(goal_data)[1], ],
                        inherit.aes = FALSE, fill = "grey", alpha = 0.2) +
     ggplot2::theme_bw(base_size = 16) +
-    scale_shape_manual(values = c("updated" = 16, "existing" = 1)) +
-    labs(
+    ggplot2::scale_shape_manual(values = c("updated" = 16, "existing" = 1)) +
+    ggplot2::labs(
       title = title,
       subtitle = paste0("Brood Years:", min(brood_data$yr), " - ", max(brood_data$yr)),
       x = "Escapement",
       y = "Recruitment",
       caption = cap) +
-    theme(text = element_text(family = "sans"),
+    ggplot2::theme(text = element_text(family = "sans"),
           plot.caption = element_text(
             hjust = 0,
             size = 10),

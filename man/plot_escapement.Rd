@@ -25,9 +25,10 @@ Produces a plot of historical escapements with an overlay of the goal range.
 }
 \examples{
 
-p_Igushik <- make_age(data_Igushik, 3, 8)
-brood_Igushik <- make_brood(data_Igushik, p_Igushik)
+p_Igushik <- make_age(data_Igushik, min_age = 3, max_age = 8)
+brood_Igushik <- make_brood(data = data_Igushik, p = p_Igushik)
 
-plot_escapement(brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon")
+plot_escapement(brood_data = brood_Igushik, goal_data = goal_Igushik,
+title = "Igushik River Sockeye Salmon")
 
 }

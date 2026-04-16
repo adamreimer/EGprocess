@@ -6,7 +6,7 @@
 #' @returns data frame
 #'
 #' @examples
-#' p_Igushik <- make_age(data_Igushik, 3, 8)
+#' p_Igushik <- make_age(data_Igushik, min_age = 3, max_age = 8)
 #' make_brood(data = data_Igushik, p = p_Igushik)
 #'
 #' @export

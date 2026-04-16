@@ -1,9 +1,20 @@
 #' @title Comparative OYP Plot
 #' @description
-#'  Produces faceted OYP plots representing the prior and updated OYPs for the stock, both overlain with escapement goal ranges. If a new escapement goal finding was made as a result of the updated analysis the new escapement goal will be overlay the updated OYP while the prior escapement goal range will overlay the prior OYP.
+#'  Produces faceted OYP plots representing the prior and updated OYPs for the
+#'  stock, both overlain with escapement goal ranges. If a new escapement goal
+#'  finding was made as a result of the updated analysis the new escapement goal
+#'  will be overlay the updated OYP while the prior escapement goal range will
+#'  overlay the prior OYP.
 #'
-#' @param profile_data A list of 2 OYPs that you wish to plot. The name of each list object will be used as the facet title. Recommend "Brood Year: xxxx - YYYY" for each item. The function assumes the first item in the list is the old OYP and the second item in the list is the updated OYP.
-#' @param goal_data A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. If the updated analysis resulted in a new escapement goal finding the new finding should be included as the last row with the year labeled as "new". Use ub = NA for lower bound SEGs.
+#' @param profile_data A list of 2 OYPs that you wish to plot. The name of each
+#' list object will be used as the facet title. Recommend "Brood Year: xxxx - YYYY"
+#' for each item. The function assumes the first item in the list is the old OYP
+#' and the second item in the list is the updated OYP.
+#' @param goal_data A dataframe containing calendar year (yr), the escapement goal
+#' lower bound (lb) and, the escapement goal upper bound (ub). Only needs to
+#' include years where the goal changed. If the updated analysis resulted in a
+#' new escapement goal finding the new finding should be included as the last
+#' row with the year labeled as "new". Use ub = NA for lower bound SEGs.
 #' @param title A character vector with the plot title. Suggest "X River, Y Salmon".
 #' @param limit Upper bound of spawners for plot. Default (NULL) will use 2.25 times S.msy.
 #'
@@ -20,7 +31,7 @@
 #' post_list <-
 #'   list(
 #'     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-#'     'Brood Years: 1963-2017' = post_Igushik_byr63_15
+#'     'Brood Years: 1963-2015' = post_Igushik_byr63_15
 #'   )
 #' profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 #'
@@ -51,8 +62,20 @@ plot_profile_facet <- function(profile_data,
   cap_width = 85
   cap <-
     case_when(
-      max(n_OYP) == 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability (under average productivity) of achieving 90% of maximum sustained yield (MSY) relative to the number of salmon escaped. Probabilities associated with the intersection of the OYP curve and the escapement goal bounds are useful to describe the utility of the goal range with respect to MSY. Achieving 90% of MSY is the standard criteria used to describe an escapement goal range.", width = cap_width),
-      max(n_OYP) == 2 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability (under average productivity) of achieving X% of maximum sustained yield (MSY) relative to the number of salmon escaped. Probabilities associated with the intersection of the OYP curve and the escapement goal bounds are useful to describe the utility of the goal range with respect to MSY. Achieving 90% of MSY is the standard criteria used to describe an escapement goal range.", width = cap_width)
+      max(n_OYP) == 1 ~ stringr::str_wrap("Note: Optimal Yield Profiles (OYP)
+               show the probability (under average productivity) of achieving 90%
+               of maximum sustained yield (MSY) relative to the number of salmon
+               escaped. Probabilities associated with the intersection of the OYP
+               curve and the escapement goal bounds are useful to describe the
+               utility of the goal range with respect to MSY. Achieving 90% of MSY
+               is the standard criteria used to describe an escapement goal range.", width = cap_width),
+      max(n_OYP) == 2 ~ stringr::str_wrap("Note: Optimal Yield Profiles (OYP) show
+               the probability (under average productivity) of achieving X% of
+               maximum sustained yield (MSY) relative to the number of salmon
+               escaped. Probabilities associated with the intersection of the OYP
+               curve and the escapement goal bounds are useful to describe the
+               utility of the goal range with respect to MSY. Achieving 90% of MSY
+               is the standard criteria used to describe an escapement goal range.", width = cap_width)
     )
 
   ref_lines0 <-

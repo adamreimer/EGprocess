@@ -3,8 +3,14 @@
 #' Produces a SR plot with an overlay of Smsy and the goal range.
 #'
 #' @param profile_data Output of the get_profile function.
-#' @param brood_data A dataframe containing year (yr), Spawners (S), and Recruits (R) to be included in the plot. The data frame should include years without empirical observations of S and R.
-#' @param goal_data  A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. If the updated analysis resulted in a new escapement goal finding the new finding should be included as the last row with the year labeled as "new". Use ub = NA for lower bound SEGs.
+#' @param brood_data A dataframe containing year (yr), Spawners (S), and Recruits (R)
+#' to be included in the plot. The data frame should include years without empirical
+#' observations of S and R.
+#' @param goal_data  A dataframe containing calendar year (yr), the escapement
+#' goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs
+#' to include years where the goal changed. If the updated analysis resulted in
+#' a new escapement goal finding the new finding should be included as the last
+#' row with the year labeled as "new". Use ub = NA for lower bound SEGs.
 #' @param title A character vector with the plot title. Suggest "X River, Y Salmon".
 #'
 #' @return A figure
@@ -15,12 +21,13 @@
 #'
 #' @examples
 #'
-#' p_Igushik <- make_age(data_Igushik, 3, 8)
-#' brood_Igushik <- make_brood(data_Igushik, p_Igushik)
+#' p_Igushik <- make_age(data_Igushik, min_age = 3, max_age = 8)
+#' brood_Igushik <- make_brood(data = data_Igushik, p = p_Igushik)
 #'
-#' profile_Igushik <- get_profile(post_Igushik_byr63_15, multiplier = 1e-5)
+#' profile_Igushik <- get_profile(posterior_data = post_Igushik_byr63_15, multiplier = 1e-5)
 #'
-#' plot_ey(profile_Igushik, brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon")
+#' plot_ey(profile_data = profile_Igushik, brood_data = brood_Igushik,
+#' goal_data = goal_Igushik, title = "Igushik River Sockeye Salmon")
 #'
 #' @export
 
@@ -46,10 +53,10 @@ plot_ey <- function(profile_data,
   byr_modified <- suppressWarnings(max(as.numeric(goal_data$yr[goal_data$yr != "new"])) - max_age)
   brood_data <-
     brood_data %>%
-    mutate(update = ifelse(yr > byr_modified, "updated", "existing"),
+    dplyr::mutate(update = ifelse(yr > byr_modified, "updated", "existing"),
            Y = R - S) %>%
-    select(yr, S, Y, update) %>%
-    filter(complete.cases(.))
+    dplyr::select(yr, S, Y, update) %>%
+    dplyr::filter(complete.cases(.))
 
   ymax <- max(brood_data$Y) * 1.05
   ymin <- if(min(brood_data$Y) < 0){min(brood_data$Y) * 1.05} else{0}
@@ -58,8 +65,12 @@ plot_ey <- function(profile_data,
   cap_width = 85
   cap <-
     case_when(
-      sum(brood_data$update == "existing") == 0 ~ str_wrap("Note: The current escapement goal range is shaded gray.", width = cap_width),
-      sum(brood_data$update == "updated") > 0 ~ str_wrap("Note: Filled circles indicated observations added to the dataset since the escapement goal was last modified. The current escapement goal range is shaded gray.", width = cap_width)
+      sum(brood_data$update == "existing") == 0 ~
+        stringr::str_wrap("Note: The current escapement goal range is shaded gray.", width = cap_width),
+      sum(brood_data$update == "updated") > 0 ~
+        stringr::str_wrap("Note: Filled circles indicated observations added to
+                          the dataset since the escapement goal was last modified.
+                          The current escapement goal range is shaded gray.", width = cap_width)
     )
 
   ggplot2::ggplot(brood_data, aes(x = S, y = Y)) +

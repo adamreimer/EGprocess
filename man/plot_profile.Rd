@@ -4,12 +4,16 @@
 \alias{plot_profile}
 \title{OYP Plot}
 \usage{
-plot_profile(profile_dat, goal_dat, title, limit = NULL)
+plot_profile(profile_data, goal_data, title, limit = NULL)
 }
 \arguments{
-\item{profile_dat}{Output of the get_profile function}
+\item{profile_data}{Output of the get_profile function}
 
-\item{goal_dat}{A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. If the updated analysis resulted in a new escapement goal finding the new finding should be included as the last row with the year labeled as "new". Use ub = NA for lower bound SEGs.}
+\item{goal_data}{A dataframe containing calendar year (yr), the escapement
+goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs
+to include years where the goal changed. If the updated analysis resulted in
+a new escapement goal finding the new finding should be included as the last
+row with the year labeled as "new". Use ub = NA for lower bound SEGs.}
 
 \item{title}{A character vector with the plot title. Suggest "X River, Y Salmon".}
 
@@ -26,11 +30,12 @@ Produces a plot of the OYP with an overlay of the goal range.
 post_list <-
   list(
     'Brood Years: 1963-2005' = post_Igushik_byr63_05,
-    'Brood Years: 1963-2017' = post_Igushik_byr63_15
+    'Brood Years: 1963-2015' = post_Igushik_byr63_15
   )
 profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 
-plot_profile(profile_list[[2]], goal_Igushik, "Igushik River Sockeye Salmon")
+plot_profile(profile_data = profile_list[[2]], goal_data = goal_Igushik,
+title = "Igushik River Sockeye Salmon")
 
 }
 \seealso{

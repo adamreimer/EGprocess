@@ -14,8 +14,8 @@ proj_sitrep()
 use_roxygen_md()
 
 
-# License (pick one; MIT shown)
-use_mit_license("Your Name")
+# License (used GPL 3, similar to NOAA Fisheries)
+usethis::use_gpl_license(version = 3, include_future = TRUE)
 
 # Document dependencies
 # use_package("dplyr", type = "Imports")
@@ -25,7 +25,7 @@ use_mit_license("Your Name")
 # use_package("tidyr", type = "Imports")
 # use_package("magrittr", type = "Imports")
 # use_package("scales", type = "Imports")
-
+# use_package("rlang", type = "Imports")
 
 # Write the needed .Rd files for each script
 devtools::document()

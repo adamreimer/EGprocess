@@ -34,11 +34,11 @@
 #'   )
 #' profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 #'
-#' EGoutput(posterior_data = post_Igushik_byr63_15, brood_data = brood_Igushik,
+#' output_SR(posterior_data = post_Igushik_byr63_15, brood_data = brood_Igushik,
 #' goal_data = goal_Igushik, title = "Igushik River Sockeye Salmon", multiplier = 1e-5)
 #'
 #' @export
-EGoutput <- function(posterior_data, brood_data, goal_data, title, MSY_pct = NA, multiplier = 1){
+output_SR <- function(posterior_data, brood_data, goal_data, title, MSY_pct = NA, multiplier = 1){
   if(length(posterior_data) == 2){
     profile_dat <- lapply(posterior_data, get_profile, MSY_pct = MSY_pct, multiplier = multiplier)
 

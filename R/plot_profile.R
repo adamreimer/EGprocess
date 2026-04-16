@@ -3,7 +3,7 @@
 #'  Produces a plot of the OYP with an overlay of the goal range.
 #'
 #' @param profile_dat Output of the get_profile function
-#' @param goal_dat  A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. If the updated analysis resulted in a new escapement goal finding the new finding should be included as the last row with the year labeled as "new". Use ub = NA for lower bound SEGs.
+#' @param goal_data  A dataframe containing calendar year (yr), the escapement goal lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include years where the goal changed. If the updated analysis resulted in a new escapement goal finding the new finding should be included as the last row with the year labeled as "new". Use ub = NA for lower bound SEGs.
 #' @param title A character vector with the plot title. Suggest "X River, Y Salmon".
 #' @param limit Upper bound of spawners for plot. Default (NULL) will use 2.25 times S.msy.
 #'
@@ -29,7 +29,7 @@
 #' @export
 
 plot_profile <- function(profile_dat,
-                         goal_dat,
+                         goal_data,
                          title,
                          limit = NULL){
   S.msy50 <- median(profile_dat$S.msy)
@@ -40,7 +40,7 @@ plot_profile <- function(profile_dat,
   }
   else xmax <- limit
 
-  goal_range <- as.numeric(goal_dat[dim(goal_dat)[1], c(2, 3)])
+  goal_range <- as.numeric(goal_data[dim(goal_data)[1], c(2, 3)])
 
   cap_width = 85
   OYP2 <- sum(!(names(profile_dat) %in% c("s", "OYP90", "SY", "S.msy")))
@@ -58,7 +58,7 @@ plot_profile <- function(profile_dat,
     ggplot2::ggplot(ggplot2::aes(x = s, y = prob, linetype = max_pct)) +
     ggplot2::geom_line() +
     ggplot2::geom_rect(ggplot2::aes(xmin = lb, xmax = ub, ymin = -Inf, ymax = Inf),
-                       data = goal_dat[dim(goal_dat)[1], ],
+                       data = goal_data[dim(goal_data)[1], ],
                        inherit.aes = FALSE, fill = "grey", alpha = 0.2) +
     ggplot2::annotate("segment",
                       x = -Inf, xend = goal_range[[1]],

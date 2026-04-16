@@ -45,7 +45,7 @@ plot_SR <- function(posterior_data,
               lnalpha = median(lnalpha),
               phi = median(phi),
               sigma = median(sigma),
-              Smsy = lnalpha / beta * (0.5000002 - 0.07 * lnalpha))
+              Smsy = lnalpha / beta * (0.5 - 0.07 * lnalpha))
 
   # Identify brood years added since the last goal change.
   # Likely fragile. Need Hamachan to output some of this stuff.

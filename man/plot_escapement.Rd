@@ -4,12 +4,12 @@
 \alias{plot_escapement}
 \title{Historical Escapement Plot}
 \usage{
-plot_escapement(brood_data, goal_dat, title)
+plot_escapement(brood_data, goal_data, title)
 }
 \arguments{
 \item{brood_data}{A dataframe containing calendar year (yr) and escapement(S).}
 
-\item{goal_dat}{A dataframe containing calendar year (yr), the escapement goal
+\item{goal_data}{A dataframe containing calendar year (yr), the escapement goal
 lower bound (lb) and, the escapement goal upper bound (ub). Only needs to include
 years where the goal changed. If the updated analysis resulted in a new
 escapement goal finding the new finding should be included as the last row with

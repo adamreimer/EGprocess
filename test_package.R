@@ -42,3 +42,10 @@ use_pkgdown()             # add pkgdown config
 pkgdown::build_site()
 
 
+
+
+devtools::load_all()     # load package without installing
+devtools::test()         # run tests
+devtools::document()     # rebuild docs & NAMESPACE
+devtools::check()        # full check
+

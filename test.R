@@ -1,5 +1,5 @@
-p_Igushik <- make.age(data_Igushik, 3, 8)
-brood_Igushik <- make.brood(data_Igushik, p_Igushik)
+p_Igushik <- make_age(data_Igushik, 3, 8)
+brood_Igushik <- make_brood(data_Igushik, p_Igushik)
 goal_Igushik <-
   data.frame(
     yr = c(1984, 2001, 2015),

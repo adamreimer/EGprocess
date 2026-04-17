@@ -86,8 +86,7 @@ plot_SR <- function(posterior_data,
     ggplot2::geom_vline(xintercept = param_50$Smsy) +
     ggplot2::geom_rect(ggplot2::aes(xmin = lb, xmax = ub, ymin = -Inf, ymax = Inf),
                        data = goal_data[dim(goal_data)[1], ],
-                       inherit.aes = FALSE, fill = "grey", alpha = 0.2) +
-    ggplot2::theme_bw(base_size = 16) +
+                       inherit.aes = FALSE, fill = "gray", alpha = 0.2) +
     ggplot2::scale_shape_manual(values = c("updated" = 16, "existing" = 1)) +
     ggplot2::labs(
       title = title,
@@ -95,12 +94,6 @@ plot_SR <- function(posterior_data,
       x = "Escapement",
       y = "Recruitment",
       caption = cap) +
-    ggplot2::theme(text = element_text(family = "sans"),
-          plot.caption = element_text(
-            hjust = 0,
-            size = 10),
-          plot.subtitle = element_text(size = 10),
-          plot.caption.position = "plot",
-          legend.position = "none")
+    theme_eg()
 }
 

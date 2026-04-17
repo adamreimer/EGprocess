@@ -85,18 +85,10 @@ plot_ey <- function(profile_data,
     ggplot2::coord_cartesian(xlim = c(0, xmax), ylim = c(ymin, ymax)) +
     ggplot2::scale_color_manual(guide = "none", values = "black") +
     scale_shape_manual(values = c("updated" = 16, "existing" = 1)) +
-    ggplot2::theme_bw(base_size = 16) +
-    labs(
-      title = title,
+    labs(title = title,
       subtitle = paste0("Brood Years:", min(brood_data$yr), " - ", max(brood_data$yr)),
       x = "Escapement",
       y = "Yield",
       caption = cap) +
-    theme(text = element_text(family = "sans"),
-          plot.caption = element_text(
-            hjust = 0,
-            size = 10),
-          plot.subtitle = element_text(size = 10),
-          plot.caption.position = "plot",
-          legend.position = "none")
+    theme_eg()
 }

@@ -54,18 +54,12 @@ plot_escapement <- function(brood_data,
     ggplot2::geom_line(aes(y = S_bound, linetype = bound), data = goal) +
     ggplot2::scale_y_continuous(labels = scales::comma) +
     ggplot2::scale_fill_manual(values = c("gray75", "black")) +
-    ggplot2::theme_bw(base_size = 16) +
-    ggplot2::labs(
-      title = title,
+    ggplot2::labs(title = title,
       x = "Year",
       y = "Escapement",
       caption = cap) +
-    ggplot2::theme(text = ggplot2::element_text(family = "sans"),
-          plot.caption = ggplot2::element_text(
-            hjust = 0,
-            size = 10),
-          plot.caption.position = "plot",
-          legend.position = "none")
+    theme_eg()
+
 }
 
 # For backwards compatibility

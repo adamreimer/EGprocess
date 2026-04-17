@@ -47,7 +47,7 @@ plot_SR(post_Igushik_byr63-15,
 post_list <-
   list(
     'byr: 1963-2005' = post_Igushik_byr63_05,
-    'byr: 1963-2017' = post_Igushik_byr63-15
+    'byr: 1963-2017' = post_Igushik_byr63_15
   )
 profile_list <- lapply(post_list, get_profile, multiplier = 1e-5)
 profile_list80 <- lapply(post_list, get_profile, multiplier = 1e-5, MSY_pct = 80)

@@ -8,38 +8,38 @@ goal_Igushik <-
   )
 goal_Igushik_new <-
   data.frame(
-    yr = c(1984, 2001, 2015, "new"),
+    yr = c(1984, 2001, 2015, 2026),
     lb = c(150000, 150000, 150000, 200000),
     ub = c(250000, 300000, 400000, 500000)
   )
 
 # test plot_s w and wo a new goal finding
-plot_S(brood_Igushik,
+plot_escapement(brood_Igushik,
        goal_Igushik,
        "Igushik River Sockeye Salmon"
 )
-plot_S(brood_Igushik,
+plot_escapement(brood_Igushik,
        goal_Igushik_new,
        "Igushik River Sockeye Salmon"
 )
 
 #test plot_SR function
 # No goal change
-plot_SR(post_Igushik_byr63-15,
+plot_SR(post_Igushik_byr63_15,
         brood_Igushik,
         goal_dat = goal_Igushik,
         "Igushik River Sockeye Salmon",
         multiplier = 1e-5)
 #new finding
-plot_SR(post_Igushik_byr63-15,
+plot_SR(post_Igushik_byr63_15,
         brood_Igushik,
         goal_dat = goal_Igushik_new,
         "Igushik River Sockeye Salmon",
         multiplier = 1e-5)
 #first finding
-plot_SR(post_Igushik_byr63-15,
+plot_SR(post_Igushik_byr63_15,
         brood_Igushik,
-        goal_dat = goal_Igushik_new[goal_Igushik_new$yr == "new", ],
+        goal_dat = goal_Igushik_new[goal_Igushik_new$yr == 2026, ],
         "Igushik River Sockeye Salmon",
         multiplier = 1e-5)
 
@@ -67,7 +67,7 @@ plot_ey(profile_list[[2]],
 #first finding
 plot_ey(profile_list[[2]],
         brood_Igushik,
-        goal_dat = goal_Igushik_new[goal_Igushik_new$yr == "new", ],
+        goal_dat = goal_Igushik_new[goal_Igushik_new$yr == 2026, ],
         "Igushik River Sockeye Salmon")
 
 #test plot_profile
@@ -89,43 +89,43 @@ plot_profile(profile_list80[[2]],
 )
 # first finding
 plot_profile(profile_list[[2]],
-             goal_Igushik_new[goal_Igushik_new$yr == "new", ],
+             goal_Igushik_new[goal_Igushik_new$yr == 2026, ],
              "Igushik River Sockeye Salmon")
 plot_profile(profile_list80[[2]],
-             goal_Igushik_new[goal_Igushik_new$yr == "new", ],
+             goal_Igushik_new[goal_Igushik_new$yr == 2026, ],
              "Igushik River Sockeye Salmon")
 
 #test plot_profile2
 # no goal change
-plot_profile2(profile_list,
+plot_profile_facet(profile_list,
              goal_Igushik,
              "Igushik River Sockeye Salmon")
-plot_profile2(profile_list80,
+plot_profile_facet(profile_list80,
              goal_Igushik,
              "Igushik River Sockeye Salmon")
 # new finding
-plot_profile2(profile_list,
+plot_profile_facet(profile_list,
              goal_Igushik_new,
              "Igushik River Sockeye Salmon",
 )
-plot_profile2(profile_list80,
+plot_profile_facet(profile_list80,
              goal_Igushik_new,
              "Igushik River Sockeye Salmon",
 )
 # first finding
 # These should not work, and don't. There would not be 2 profiles for a first finding.
-plot_profile2(profile_list,
+plot_profile_facet(profile_list,
              goal_Igushik_new[goal_Igushik_new$yr == "new", ],
              "Igushik River Sockeye Salmon")
-plot_profile2(profile_list80,
+plot_profile_facet(profile_list80,
              goal_Igushik_new[goal_Igushik_new$yr == "new", ],
              "Igushik River Sockeye Salmon")
 
 # Test EGoutput
 # 90% of MSY
-EGoutput(post_list, brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", multiplier = 1e-5)
-EGoutput(post_list[[2]], brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", multiplier = 1e-5)
+output_SR(post_list, brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", multiplier = 1e-5)
+output_SR(post_list[[2]], brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", multiplier = 1e-5)
 
 # 80% & 90% of MSY
-EGoutput(post_list, brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", MSY_pct = 80, multiplier = 1e-5)
-EGoutput(post_list[[2]], brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", MSY_pct = 80, multiplier = 1e-5)
+output_SR(post_list, brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", MSY_pct = 80, multiplier = 1e-5)
+output_SR(post_list[[2]], brood_Igushik, goal_Igushik, "Igushik River Sockeye Salmon", MSY_pct = 80, multiplier = 1e-5)

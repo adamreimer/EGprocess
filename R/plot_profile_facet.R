@@ -46,7 +46,8 @@ plot_profile_facet <- function(profile_data,
                           limit = NULL){
   S.msy50 <- max(sapply(profile_data, function(x) median(x[["S.msy"]])))
   n_OYP <- sapply(profile_data, function(x) sum(grepl("OYP\\d+", names(x))))
-  name_OYP <- names(profile_data[[2]])[!(names(profile_data[[2]]) %in% c("s", "OYP90", "SY", "S.msy"))]
+  name_alternate <- names(profile_data[[2]])[!(names(profile_data[[2]]) %in% c("s", "OYP90", "SY", "S.msy"))]
+  pct_alternate <- gsub("\\D", "", name_alternate)
 
   if(is.null(limit)){
     xmax <- S.msy50 * 2.25
@@ -65,17 +66,16 @@ plot_profile_facet <- function(profile_data,
       max(n_OYP) == 1 ~ stringr::str_wrap("Note: Optimal Yield Profiles (OYP)
                show the probability (under average productivity) of achieving 90%
                of maximum sustained yield (MSY) relative to the number of salmon
-               escaped. Probabilities associated with the intersection of the OYP
-               curve and the escapement goal bounds are useful to describe the
-               utility of the goal range with respect to MSY. Achieving 90% of MSY
-               is the standard criteria used to describe an escapement goal range.", width = cap_width),
-      max(n_OYP) == 2 ~ stringr::str_wrap("Note: Optimal Yield Profiles (OYP) show
-               the probability (under average productivity) of achieving X% of
-               maximum sustained yield (MSY) relative to the number of salmon
-               escaped. Probabilities associated with the intersection of the OYP
-               curve and the escapement goal bounds are useful to describe the
-               utility of the goal range with respect to MSY. Achieving 90% of MSY
-               is the standard criteria used to describe an escapement goal range.", width = cap_width)
+               escaped. The probability of achieving 90% of MSY is the standard
+               criteria used to describe an escapement goal range.", width = cap_width),
+      max(n_OYP) == 2 ~ stringr::str_wrap(paste0(
+               "Note: Optimal Yield Profiles (OYP) show the probability (under average
+               productivity) of achieving ",
+               pct_alternate,
+               "% (dashed line) and 90% (solid line) of maximum sustained yield (MSY)
+               relative to the number of salmon escaped. The probability of achieving
+               90% of MSY is the standard criteria used to describe an escapement goal
+               range."), width = cap_width)
     )
 
   ref_lines0 <-
@@ -85,20 +85,20 @@ plot_profile_facet <- function(profile_data,
     mutate(y90 = profile_data[[profile]][["OYP90"]][which.min(abs(profile_data[[profile]]$s - xend))],
            x = -Inf)
 
-  if(length(name_OYP) == 0){}
-  else(ref_lines0 <-
-         ref_lines0 <-
+  if(max(n_OYP) == 1){}
+  else{
+    varname <- paste0("y", pct_alternate)
+    ref_lines0 <-
          ref_lines0 %>%
-         mutate(y00 = profile_data[[profile]][[name_OYP]][which.min(abs(profile_data[[profile]]$s - xend))])
-  )
+         mutate(!!varname := profile_data[[profile]][[name_alternate]][which.min(abs(profile_data[[profile]]$s - xend))])
+  }
 
   ref_lines <-
     ref_lines0 %>%
     pivot_longer(dplyr::starts_with("y"),
                  values_to = "y",
                  names_to = "max_pct",
-                 names_prefix = "y") %>%
-    mutate(max_pct = ifelse(max_pct == "00", gsub("OYP(\\d+)", "\\1", name_OYP), max_pct))
+                 names_prefix = "y")
 
   lapply(1:length(profile_data), function(x) mutate(profile_data[[x]], profile = names(profile_data)[x])) %>%
     do.call(rbind, .) %>%
@@ -115,8 +115,7 @@ plot_profile_facet <- function(profile_data,
     ggplot2::facet_grid(. ~ profile) +
     ggplot2::scale_x_continuous(limits = c(0, xmax), labels = scales::comma) +
     ggplot2::scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
-    ggplot2::scale_linetype_manual(name = "Percent of MSY",
-                                   values = if(max(n_OYP) == 2){c("dashed", "solid")}else("solid"))+
+    ggplot2::scale_linetype_manual(values = if(max(n_OYP) == 2){c("dashed", "solid")}else("solid"))+
     ggplot2::theme_bw(base_size = 16) +
     ggplot2::ggtitle(title) +
     labs(
@@ -128,5 +127,6 @@ plot_profile_facet <- function(profile_data,
           plot.caption = element_text(
             hjust = 0,
             size = 10),
-          plot.caption.position = "plot")
+          plot.caption.position = "plot",
+          legend.position = "none")
 }

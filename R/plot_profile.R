@@ -39,6 +39,8 @@ plot_profile <- function(profile_data,
                          limit = NULL){
   S.msy50 <- median(profile_data$S.msy)
   n_OYP <- sum(grepl("OYP\\d+", names(profile_data)))
+  name_alternate <- names(profile_data)[!(names(profile_data) %in% c("s", "OYP90", "SY", "S.msy"))]
+  pct_alternate <- gsub("\\D", "", name_alternate)
 
   if(is.null(limit)){
     xmax <- S.msy50 * 2.25
@@ -48,33 +50,53 @@ plot_profile <- function(profile_data,
   goal_range <- as.numeric(goal_data[dim(goal_data)[1], c(2, 3)])
 
   cap_width = 85
-  OYP2 <- sum(!(names(profile_data) %in% c("s", "OYP90", "SY", "S.msy")))
   cap <-
     case_when(
-      OYP2 == 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability
+      n_OYP == 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability
                            (under average productivity) of achieving 90% of maximum
                            sustained yield (MSY) relative to the number of salmon
-                           escaped. Probabilities associated with the intersection
-                           of the OYP curve and the escapement goal bounds are useful
-                           to describe the utility of the goal range with respect to
-                           MSY. Achieving 90% of MSY is the standard criteria used to
-                           describe an escapement goal range.", width = cap_width),
-      OYP2 != 1 ~ str_wrap("Note: Optimal Yield Profiles (OYP) show the probability
-                           (under average productivity) of achieving X% of maximum
-                           sustained yield (MSY) relative to the number of salmon escaped.
-                           Probabilities associated with the intersection of the OYP curve
-                           and the escapement goal bounds are useful to describe the
-                           utility of the goal range with respect to MSY. Achieving 90% of
-                           MSY is the standard criteria used to describe an escapement goal range.", width = cap_width)
+                           escaped. The probability of achieving 90% of MSY is the standard
+                           criteria used to describe an escapement goal range.", width = cap_width),
+      n_OYP == 2 ~ str_wrap(paste0("Note: Optimal Yield Profiles (OYP) show the probability
+                                  (under average productivity) of achieving ",
+                                   pct_alternate,
+                                   "% (dashed line) and 90% (solid line) of maximum sustained yield (MSY)
+                                  relative to the number of salmon escaped. The probability of achieving
+                                  90% of MSY is the standard criteria used to describe an escapement
+                                   goal range."),
+                            width = cap_width)
     )
 
-  plot <- profile_data %>%
+  ref_lines0 <-
+    goal_data[dim(goal_data)[1], c(2, 3)] %>%
+    pivot_longer(cols = lb:ub, values_to = "xend") %>%
+    rowwise() %>%
+    mutate(y90 = profile_data[["OYP90"]][which.min(abs(profile_data$s - xend))],
+           x = -Inf)
+
+  if(n_OYP == 1){}
+  else{
+    varname <- paste0("y", pct_alternate)
+    ref_lines0 <-
+      ref_lines0 %>%
+      mutate(!!varname := profile_data[[name_alternate]][which.min(abs(profile_data$s - xend))])
+  }
+
+  ref_lines <-
+    ref_lines0 %>%
+    pivot_longer(dplyr::starts_with("y"),
+                 values_to = "y",
+                 names_to = "max_pct",
+                 names_prefix = "y")
+
+  profile_data %>%
     dplyr::group_by(s) %>%
     dplyr::filter(s <= xmax) %>%
     tidyr::gather("key", "prob", -s, -S.msy, -SY, factor_key = TRUE) %>%
     dplyr::mutate(max_pct = gsub("[A-Z]+([0-9]+)", "\\1", key)) %>%
     ggplot2::ggplot(ggplot2::aes(x = s, y = prob, linetype = max_pct)) +
     ggplot2::geom_line() +
+    ggplot2::geom_segment(aes(x = x, xend = xend, y = y), data = ref_lines, linewidth = 0.25) +
     ggplot2::geom_rect(ggplot2::aes(xmin = lb, xmax = ub, ymin = -Inf, ymax = Inf),
                        data = goal_data[dim(goal_data)[1], ],
                        inherit.aes = FALSE, fill = "gray", alpha = 0.2) +
@@ -88,8 +110,7 @@ plot_profile <- function(profile_data,
                       linewidth = 0.25) +
     ggplot2::scale_x_continuous(limits = c(0, xmax), labels = scales::comma) +
     ggplot2::scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
-    ggplot2::scale_linetype_manual(name = "Percent of MSY",
-                                   values = if(n_OYP == 2){c("dashed", "solid")}else("solid"))+
+    ggplot2::scale_linetype_manual(values = if(n_OYP == 2){c("dashed", "solid")}else("solid"))+
     ggplot2::theme_bw(base_size = 16) +
     ggplot2::ggtitle(title) +
     labs(
@@ -101,21 +122,6 @@ plot_profile <- function(profile_data,
           plot.caption = element_text(
             hjust = 0,
             size = 10),
-          plot.caption.position = "plot")
-
-  if(OYP2 == 1){
-    col <- names(profile_data)[!(names(profile_data) %in% c( "s", "OYP90", "SY", "S.msy"))]
-    plot +
-      ggplot2::annotate("segment",
-                        x = -Inf, xend = goal_range[[1]],
-                        y = profile_data[[col]][which.min(abs(profile_data$s - goal_range[[1]]))],
-                        linewidth = 0.25,
-                        linetype = 2) +
-      ggplot2::annotate("segment",
-                        x = -Inf, xend = goal_range[[2]],
-                        y = profile_data[[col]][which.min(abs(profile_data$s - goal_range[[2]]))],
-                        linewidth = 0.25,
-                        linetype = 2)
-  }
-  else plot
+          plot.caption.position = "plot",
+          legend.position = "none")
 }

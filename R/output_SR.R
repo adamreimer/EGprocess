@@ -43,20 +43,20 @@ output_SR <- function(posterior_data, brood_data, goal_data, title, MSY_pct = NA
     profile_dat <- lapply(posterior_data, get_profile, MSY_pct = MSY_pct, multiplier = multiplier)
 
     out <- list(
-      plot_escapement(brood_data, goal_data, title),
-      plot_SR(posterior_data[[2]], brood_data, goal_data, title, multiplier = multiplier),
-      plot_ey(profile_dat[[2]], brood_data, goal_data, title),
-      plot_profile_facet(profile_dat, goal_data, title)
+      "Historical S" = plot_escapement(brood_data, goal_data, title),
+      "Spawner-Recruit" = plot_SR(posterior_data[[2]], brood_data, goal_data, title, multiplier = multiplier),
+      "Expected Yield" = plot_ey(profile_dat[[2]], brood_data, goal_data, title),
+      "OYP" = plot_profile_facet(profile_dat, goal_data, title)
     )
   }
   else{
     profile_dat <- get_profile(posterior_data, MSY_pct = MSY_pct, multiplier = multiplier)
 
     out <- list(
-      plot_escapement(brood_data, goal_data, title),
-      plot_SR(posterior_data, brood_data, goal_data, title, multiplier = multiplier),
-      plot_ey(profile_dat, brood_data, goal_data, title),
-      plot_profile(profile_dat, goal_data, title)
+      "Historical S" = plot_escapement(brood_data, goal_data, title),
+      "Spawner-Recruit" = plot_SR(posterior_data, brood_data, goal_data, title, multiplier = multiplier),
+      "Expected Yield" = plot_ey(profile_dat, brood_data, goal_data, title),
+      "OYP" = plot_profile(profile_dat, goal_data, title)
     )
   }
 

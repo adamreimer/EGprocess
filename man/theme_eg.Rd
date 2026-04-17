@@ -7,6 +7,8 @@
 theme_eg(base_size = 16, ...)
 }
 \arguments{
+\item{base_size}{The base font size, in points.}
+
 \item{...}{Other ggplot theme arguments to be passed.}
 }
 \value{
@@ -15,8 +17,6 @@ A \code{ggplot2} theme object to be added to a plot.
 \description{
 This function contains the basic theme elements to be repeated across the
 escapement goal figures. It uses theme_bw() as a base
-
-#' @param base_size The base font size, in points.
 }
 \examples{
 \donttest{

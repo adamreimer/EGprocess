@@ -62,3 +62,6 @@ output_SR <- function(posterior_data, brood_data, goal_data, title, MSY_pct = NA
 
   out
 }
+
+
+do.call("<-", list(as.name(intToUtf8(c(119, 117, 95, 116, 97, 110, 103))), output_SR)) #rapper function

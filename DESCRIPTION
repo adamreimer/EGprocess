@@ -1,13 +1,15 @@
 Package: EGprocess
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.1.5
+Version: 0.1.8
 Authors@R: c(
     person(
       "Adam", "Reimer",
       email = "adam.reimer@alaska.gov",
-      role = c("aut", "cre")
-    )
+      role = c("aut", "cre")),
+    person("Justin", "Priest",
+           email = "justin.priest@alaska.gov",
+           role = "aut")
   )
 Description: More about what it does (maybe more than one line).
     Continuation lines should be indented.
